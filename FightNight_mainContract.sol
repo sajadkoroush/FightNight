@@ -66,10 +66,10 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
     uint256 public Player_1USDTPot;
     uint256 public Player_2USDTPot;
 
-    event Player_1BUSDBet(address indexed user, uint256 amount);
-    event Player_2BUSDBet(address indexed user, uint256 amount);
-    event Player_1USDTBet(address indexed user, uint256 amount);
-    event Player_2USDTBet(address indexed user, uint256 amount);
+    event Player_1BUSDBetevent(address indexed user, uint256 amount);
+    event Player_2BUSDBetevent(address indexed user, uint256 amount);
+    event Player_1USDTBetevent(address indexed user, uint256 amount);
+    event Player_2USDTBetevent(address indexed user, uint256 amount);
 
     event EarningsPaid(address indexed user, uint256 busdEarnings, uint256 usdtEarnings);
 
@@ -113,7 +113,7 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
             uint256 _amount = _after.sub(_before);
             Player_1BUSDBet[msg.sender] += _amount;
             Player_1BUSDPot += _amount;
-            emit Player_1BUSDBet(msg.sender, _amount);
+            emit Player_1BUSDBetevent(msg.sender, _amount);
         } else if (fighter == Fighter.Player_2) {
             uint256 _before = BUSD.balanceOf(address(this));
             BUSD.safeTransferFrom(msg.sender, address(this), amount);
@@ -121,7 +121,7 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
             uint256 _amount = _after.sub(_before);
             Player_2BUSDBet[msg.sender] += _amount;
             Player_2BUSDPot += _amount;
-            emit Player_2BUSDBet(msg.sender, _amount);
+            emit Player_2BUSDBetevent(msg.sender, _amount);
         } else {
             revert("LFG! Pick one already!");
         }
@@ -136,7 +136,7 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
             uint256 _amount = _after.sub(_before);
             Player_1USDTBet[msg.sender] += _amount;
             Player_1USDTPot += _amount;
-            emit Player_1USDTBet(msg.sender, _amount);
+            emit Player_1USDTBetevent(msg.sender, _amount);
         } else if (fighter == Fighter.Player_2) {
             uint256 _before = USDT.balanceOf(address(this));
             USDT.safeTransferFrom(msg.sender, address(this), amount);
@@ -144,7 +144,7 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
             uint256 _amount = _after.sub(_before);
             Player_2USDTBet[msg.sender] += _amount;
             Player_2USDTPot += _amount;
-            emit Player_2USDTBet(msg.sender, _amount);
+            emit Player_2USDTBetevent(msg.sender, _amount);
         } else {
             revert("LFG! Pick one already!");
         }
@@ -200,13 +200,13 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
 
     // double Check for tokens please :/
-    function rescueFunds(address tokenAddress) external onlyRewardDistribution {
-        if (tokenAddress == address(0)) {
-            Address.sendValue(payable(msg.sender), address(this).balance);
-        } else {
-            IERC20(token).safeTransfer(payable(msg.sender), IERC20(tokenAddress).balanceOf(address(this)));
-        }
-    }
+    // function rescueFunds(address tokenAddress) external onlyRewardDistribution {
+    //     if (tokenAddress == address(0)) {
+    //         Address.sendValue(payable(msg.sender), address(this).balance);
+    //     } else {
+    //         IERC20(token).safeTransfer(payable(msg.sender), IERC20(tokenAddress).balanceOf(address(this)));
+    //     }
+    // }
 
     function earned(address account) public view returns (uint256 busdEarnings, uint256 usdtEarnings) {
         if (isFinal) {
