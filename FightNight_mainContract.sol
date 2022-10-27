@@ -31,18 +31,18 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     enum Fighter {
         Undecided,
-        Rookie,
-        Loomdart
+        Player_2,
+        Player_1
     }
 
     // IERC20 public token;
     IERC20 public BUSD;
     IERC20 public USDT;
 
-    string public constant desc = "CT Fight Night Dubai 2021: RookieXBT vs Loomdart";
+    string public constant desc = "Fight Night Dubai 2022: Player1 vs Player2";
 
+    // most be double check it again for make end of time :/
     uint256 public constant endTime = 1634400000;
-    uint256 public constant lastClaimTime = endTime + 1 days * 365 * 0.25;
 
     bool public isPaused;
     bool public isCanceled;
@@ -51,25 +51,25 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     Fighter public winner;
 
-    // mapping(address => uint256) public LoomdartBUSDBet;
-    // mapping(address => uint256) public RookieBUSDBet;
-    // mapping(address => uint256) public LoomdartUSDTBet;
-    // mapping(address => uint256) public RookieUSDTBet;
+    // mapping(address => uint256) public Player_1BUSDBet;
+    // mapping(address => uint256) public Player_2BUSDBet;
+    // mapping(address => uint256) public Player_1USDTBet;
+    // mapping(address => uint256) public Player_2USDTBet;
 
-    mapping(address => uint256) public loomdartBUSDBet;
-    mapping(address => uint256) public rookieBUSDBet;
-    mapping(address => uint256) public loomdartUSDTBet;
-    mapping(address => uint256) public rookieUSDTBet;
+    mapping(address => uint256) public Player_1BUSDBet;
+    mapping(address => uint256) public Player_2BUSDBet;
+    mapping(address => uint256) public Player_1USDTBet;
+    mapping(address => uint256) public Player_2USDTBet;
 
-    uint256 public loomdartBUSDPot;
-    uint256 public rookieBUSDPot;
-    uint256 public loomdartUSDTPot;
-    uint256 public rookieUSDTPot;
+    uint256 public Player_1BUSDPot;
+    uint256 public Player_2BUSDPot;
+    uint256 public Player_1USDTPot;
+    uint256 public Player_2USDTPot;
 
-    event LoomdartBUSDBet(address indexed user, uint256 amount);
-    event RookieBUSDBet(address indexed user, uint256 amount);
-    event LoomdartUSDTBet(address indexed user, uint256 amount);
-    event RookieUSDTBet(address indexed user, uint256 amount);
+    event Player_1BUSDBet(address indexed user, uint256 amount);
+    event Player_2BUSDBet(address indexed user, uint256 amount);
+    event Player_1USDTBet(address indexed user, uint256 amount);
+    event Player_2USDTBet(address indexed user, uint256 amount);
 
     event EarningsPaid(address indexed user, uint256 busdEarnings, uint256 usdtEarnings);
 
@@ -91,14 +91,14 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     // function BNBBet(Fighter fighter) public payable checkStatus {
     //     require(msg.value != 0, "no bnb sent");
-    //     if (fighter == Fighter.Loomdart) {
-    //         LoomdartBUSDBet[msg.sender] += msg.value;
-    //         loomdartBUSDPot += msg.value;
-    //         emit LoomdartBUSDBet(msg.sender, msg.value);
-    //     } else if (fighter == Fighter.Rookie) {
-    //         RookieBUSDBet[msg.sender] += msg.value;
-    //         rookieBUSDPot += msg.value;
-    //         emit RookieBUSDBet(msg.sender, msg.value);
+    //     if (fighter == Fighter.Player_1) {
+    //         Player_1BUSDBet[msg.sender] += msg.value;
+    //         Player_1BUSDPot += msg.value;
+    //         emit Player_1BUSDBet(msg.sender, msg.value);
+    //     } else if (fighter == Fighter.Player_2) {
+    //         Player_2BUSDBet[msg.sender] += msg.value;
+    //         Player_2BUSDPot += msg.value;
+    //         emit Player_2BUSDBet(msg.sender, msg.value);
     //     } else {
     //         revert("LFG! Pick one already!");
     //     }
@@ -106,22 +106,22 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     function BUSDBet(Fighter fighter, uint256 amount) public checkStatus {
         require(amount != 0, "no token sent");
-        if (fighter == Fighter.Loomdart) {
+        if (fighter == Fighter.Player_1) {
             uint256 _before = BUSD.balanceOf(address(this));
             BUSD.safeTransferFrom(msg.sender, address(this), amount);
             uint256 _after = BUSD.balanceOf(address(this));
             uint256 _amount = _after.sub(_before);
-            LoomdartBUSDBet[msg.sender] += _amount;
-            loomdartBUSDPot += _amount;
-            emit LoomdartBUSDBet(msg.sender, _amount);
-        } else if (fighter == Fighter.Rookie) {
+            Player_1BUSDBet[msg.sender] += _amount;
+            Player_1BUSDPot += _amount;
+            emit Player_1BUSDBet(msg.sender, _amount);
+        } else if (fighter == Fighter.Player_2) {
             uint256 _before = BUSD.balanceOf(address(this));
             BUSD.safeTransferFrom(msg.sender, address(this), amount);
             uint256 _after = BUSD.balanceOf(address(this));
             uint256 _amount = _after.sub(_before);
-            RookieBUSDBet[msg.sender] += _amount;
-            rookieBUSDPot += _amount;
-            emit RookieBUSDBet(msg.sender, _amount);
+            Player_2BUSDBet[msg.sender] += _amount;
+            Player_2BUSDPot += _amount;
+            emit Player_2BUSDBet(msg.sender, _amount);
         } else {
             revert("LFG! Pick one already!");
         }
@@ -129,22 +129,22 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     function USDTBet(Fighter fighter, uint256 amount) public checkStatus {
         require(amount != 0, "no token sent");
-        if (fighter == Fighter.Loomdart) {
+        if (fighter == Fighter.Player_1) {
             uint256 _before = USDT.balanceOf(address(this));
             USDT.safeTransferFrom(msg.sender, address(this), amount);
             uint256 _after = USDT.balanceOf(address(this));
             uint256 _amount = _after.sub(_before);
-            LoomdartUSDTBet[msg.sender] += _amount;
-            loomdartUSDTPot += _amount;
-            emit LoomdartUSDTBet(msg.sender, _amount);
-        } else if (fighter == Fighter.Rookie) {
+            Player_1USDTBet[msg.sender] += _amount;
+            Player_1USDTPot += _amount;
+            emit Player_1USDTBet(msg.sender, _amount);
+        } else if (fighter == Fighter.Player_2) {
             uint256 _before = USDT.balanceOf(address(this));
             USDT.safeTransferFrom(msg.sender, address(this), amount);
             uint256 _after = USDT.balanceOf(address(this));
             uint256 _amount = _after.sub(_before);
-            RookieUSDTBet[msg.sender] += _amount;
-            rookieUSDTPot += _amount;
-            emit RookieUSDTBet(msg.sender, _amount);
+            Player_2USDTBet[msg.sender] += _amount;
+            Player_2USDTPot += _amount;
+            emit Player_2USDTBet(msg.sender, _amount);
         } else {
             revert("LFG! Pick one already!");
         }
@@ -166,7 +166,7 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
     function finalizeFight(Fighter fighter) external onlyRewardDistribution {
         require(!isFinal, "fight is decided");
         require(!isCanceled, "fight is canceled");
-        require(fighter == Fighter.Loomdart || fighter == Fighter.Rookie, "invalid fighter");
+        require(fighter == Fighter.Player_1 || fighter == Fighter.Player_2, "invalid fighter");
         winner = fighter;
         isFinal = true;
     }
@@ -176,21 +176,21 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
         if (isFinal) {
             isFeesClaimed = true;
 
-            if (winner == Fighter.Loomdart) {
-                busdFees = rookieBUSDPot.mul(1e18).div(1e20);
+            if (winner == Fighter.Player_1) {
+                busdFees = Player_2BUSDPot.mul(1e18).div(1e19);
                 if (busdFees != 0) {
                     _safeTransfer(busdFees, true);
                 }
-                usdtFees = rookieUSDTPot.mul(1e18).div(1e20);
+                usdtFees = Player_2USDTPot.mul(1e18).div(1e19);
                 if (usdtFees != 0) {
                     _safeTransfer(usdtFees, false);
                 }
-            } else if (winner == Fighter.Rookie) {
-                busdFees = loomdartBUSDPot.mul(1e18).div(1e20);
+            } else if (winner == Fighter.Player_2) {
+                busdFees = Player_1BUSDPot.mul(1e18).div(1e19);
                 if (busdFees != 0) {
                     _safeTransfer(busdFees, true);
                 }
-                usdtFees = loomdartUSDTPot.mul(1e18).div(1e20);
+                usdtFees = Player_1USDTPot.mul(1e18).div(1e19);
                 if (usdtFees != 0) {
                     _safeTransfer(usdtFees, false);
                 }
@@ -210,40 +210,40 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
     function earned(address account) public view returns (uint256 busdEarnings, uint256 usdtEarnings) {
         if (isFinal) {
-            uint256 _LoomdartBUSDBet = LoomdartBUSDBet[account];
-            uint256 _RookieBUSDBet = RookieBUSDBet[account];
-            uint256 _LoomdartUSDTBet = LoomdartUSDTBet[account];
-            uint256 _RookieUSDTBet = RookieUSDTBet[account];
+            uint256 _Player_1BUSDBet = Player_1BUSDBet[account];
+            uint256 _Player_2BUSDBet = Player_2BUSDBet[account];
+            uint256 _Player_1USDTBet = Player_1USDTBet[account];
+            uint256 _Player_2USDTBet = Player_2USDTBet[account];
 
             uint256 winnings;
             uint256 fee;
 
-            if (winner == Fighter.Loomdart && _LoomdartBUSDBet != 0) {
-                winnings = rookieBUSDPot.mul(_LoomdartBUSDBet).div(loomdartBUSDPot);
-                fee = winnings.mul(1e18).div(1e20);
+            if (winner == Fighter.Player_1 && _Player_1BUSDBet != 0) {
+                winnings = Player_2BUSDPot.mul(_Player_1BUSDBet).div(Player_1BUSDPot);
+                fee = winnings.mul(1e18).div(1e19);
                 winnings = winnings.sub(fee);
-                busdEarnings = _LoomdartBUSDBet.add(winnings);
-            } else if (winner == Fighter.Rookie && _RookieBUSDBet != 0) {
-                winnings = loomdartBUSDPot.mul(_RookieBUSDBet).div(rookieBUSDPot);
-                fee = winnings.mul(1e18).div(1e20);
+                busdEarnings = _Player_1BUSDBet.add(winnings);
+            } else if (winner == Fighter.Player_2 && _Player_2BUSDBet != 0) {
+                winnings = Player_1BUSDPot.mul(_Player_2BUSDBet).div(Player_2BUSDPot);
+                fee = winnings.mul(1e18).div(1e19);
                 winnings = winnings.sub(fee);
-                busdEarnings = _RookieBUSDBet.add(winnings);
+                busdEarnings = _Player_2BUSDBet.add(winnings);
             }
 
-            if (winner == Fighter.Loomdart && _LoomdartUSDTBet != 0) {
-                winnings = rookieUSDTPot.mul(_LoomdartUSDTBet).div(loomdartUSDTPot);
-                fee = winnings.mul(1e18).div(1e20);
+            if (winner == Fighter.Player_1 && _Player_1USDTBet != 0) {
+                winnings = Player_2USDTPot.mul(_Player_1USDTBet).div(Player_1USDTPot);
+                fee = winnings.mul(1e18).div(1e19);
                 winnings = winnings.sub(fee);
-                usdtEarnings = _LoomdartUSDTBet.add(winnings);
-            } else if (winner == Fighter.Rookie && _RookieUSDTBet != 0) {
-                winnings = loomdartUSDTPot.mul(_RookieUSDTBet).div(rookieUSDTPot);
-                fee = winnings.mul(1e18).div(1e20);
+                usdtEarnings = _Player_1USDTBet.add(winnings);
+            } else if (winner == Fighter.Player_2 && _Player_2USDTBet != 0) {
+                winnings = Player_1USDTPot.mul(_Player_2USDTBet).div(Player_2USDTPot);
+                fee = winnings.mul(1e18).div(1e19);
                 winnings = winnings.sub(fee);
-                usdtEarnings = _RookieUSDTBet.add(winnings);
+                usdtEarnings = _Player_2USDTBet.add(winnings);
             }
         } else if (isCanceled) {
-            busdEarnings = LoomdartBUSDBet[account] + RookieBUSDBet[account];
-            usdtEarnings = LoomdartUSDTBet[account] + RookieUSDTBet[account];
+            busdEarnings = Player_1BUSDBet[account] + Player_2BUSDBet[account];
+            usdtEarnings = Player_1USDTBet[account] + Player_2USDTBet[account];
         }
     }
 
@@ -252,13 +252,13 @@ contract FightNight_V1_BUSD_USDT is IRewardDistributionRecipient {
 
         (uint256 busdEarnings, uint256 usdtEarnings) = earned(msg.sender);
         if (busdEarnings != 0) {
-            LoomdartBUSDBet[msg.sender] = 0;
-            RookieBUSDBet[msg.sender] = 0;
+            Player_1BUSDBet[msg.sender] = 0;
+            Player_2BUSDBet[msg.sender] = 0;
             _safeTransfer(busdEarnings, true);
         }
         if (usdtEarnings != 0) {
-            LoomdartUSDTBet[msg.sender] = 0;
-            RookieUSDTBet[msg.sender] = 0;
+            Player_1USDTBet[msg.sender] = 0;
+            Player_2USDTBet[msg.sender] = 0;
             _safeTransfer(usdtEarnings, false);
         }
         emit EarningsPaid(msg.sender, busdEarnings, usdtEarnings);
