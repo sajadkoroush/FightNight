@@ -325,6 +325,19 @@ async function GetAwllowanceBUSD() {
 
 }
 
+async function ApproveUSDT() {
+    // testnet
+    ApproveFunction(USDTContractAddress);
+    // mainnet
+
+}
+
+async function ApproveBUSD() {
+    // testnet
+    ApproveFunction(BUSDContractAddress);
+    // mainnet
+
+}
 
 async function GetPlayerinformation() {
     let provider = new ethers.providers.Web3Provider(window.ethereum, "any");
